@@ -24,31 +24,31 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 relative space-y-4 text-slate-100 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-md p-6 relative space-y-4 text-slate-900 dark:text-slate-100 shadow-2xl transition-colors">
         <button
           onClick={onClose}
           id="close-feedback-btn"
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
 
         <div className="flex items-center gap-2">
-          <MessageSquare className="w-5 h-5 text-indigo-400" />
+          <MessageSquare className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
           <h3 className="text-lg font-bold">Feedback & Feature Suggestions</h3>
         </div>
 
         {submitted ? (
-          <div className="p-6 text-center space-y-2 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-emerald-300">
-            <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-400" />
+          <div className="p-6 text-center space-y-2 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-500/30 rounded-xl text-emerald-900 dark:text-emerald-300">
+            <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-600 dark:text-emerald-400" />
             <p className="font-semibold text-sm">Thank you for your feedback!</p>
-            <p className="text-xs text-slate-400">Your message has been sent to our developer team.</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Your message has been sent to our developer team.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-mono text-slate-400">Feedback Category:</label>
+              <label className="text-xs font-mono text-slate-600 dark:text-slate-400">Feedback Category:</label>
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { id: 'general', label: 'General' },
@@ -59,10 +59,11 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
                     key={cat.id}
                     type="button"
                     onClick={() => setFeedbackType(cat.id as any)}
-                    className={`py-1.5 px-2 rounded-xl text-xs font-medium border transition-colors ${feedbackType === cat.id
+                    className={`py-1.5 px-2 rounded-xl text-xs font-medium border transition-colors ${
+                      feedbackType === cat.id
                         ? 'bg-indigo-600 border-indigo-500 text-white'
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800'
-                      }`}
+                        : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                    }`}
                   >
                     {cat.label}
                   </button>
@@ -71,13 +72,13 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-mono text-slate-400">Your Feedback / Ideas:</label>
+              <label className="text-xs font-mono text-slate-600 dark:text-slate-400">Your Feedback / Ideas:</label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
                 rows={4}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 resize-none"
+                className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-3 text-base sm:text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-indigo-500 resize-none"
                 placeholder="What did you think of our code visualizer or what features would you like to see?"
               />
             </div>

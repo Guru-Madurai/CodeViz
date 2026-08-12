@@ -4,8 +4,6 @@ export type NavigationTab =
   | 'data-structures'
   | 'algorithms'
   | 'tools'
-  | 'challenges'
-  | 'blog'
   | 'examples';
 
 export interface CallStackFrame {
@@ -51,14 +49,14 @@ export interface ExecutionStep {
 export interface PresetCode {
   id: string;
   name: string;
-  language: 'python' | 'javascript' | 'cpp' | 'java' | 'typescript';
+  language: 'python' | 'javascript' | 'c' | 'cpp' | 'java' | 'typescript';
   description: string;
   code: string;
   steps: ExecutionStep[];
 }
 
 // Data Structure Node States
-export type NodeState = 'default' | 'comparing' | 'found' | 'inserting' | 'removing' | 'swapping';
+export type NodeState = 'default' | 'comparing' | 'found' | 'inserting' | 'removing' | 'swapping' | 'peeking';
 
 export interface ArrayElement {
   id: string;

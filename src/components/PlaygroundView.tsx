@@ -22,12 +22,23 @@ import {
   Code2
 } from 'lucide-react';
 
-export const PlaygroundView: React.FC = () => {
+interface PlaygroundViewProps {
+  initialPresetId?: string;
+}
+
+export const PlaygroundView: React.FC<PlaygroundViewProps> = ({ initialPresetId }) => {
   // Preset or custom code selection
-  const [selectedPresetId, setSelectedPresetId] = useState<string>('py-fibonacci-memo');
-  const [language, setLanguage] = useState<'python' | 'javascript' | 'cpp' | 'java' | 'typescript'>('python');
+  const [selectedPresetId, setSelectedPresetId] = useState<string>(initialPresetId || 'c-for-loop');
+  const [language, setLanguage] = useState<'c' | 'python' | 'javascript' | 'cpp' | 'java' | 'typescript'>('c');
   const [code, setCode] = useState<string>(PRESET_CODES[0].code);
   const [steps, setSteps] = useState<ExecutionStep[]>(PRESET_CODES[0].steps);
+
+  // Sync with initialPresetId prop if provided
+  useEffect(() => {
+    if (initialPresetId) {
+      handleSelectPreset(initialPresetId);
+    }
+  }, [initialPresetId]);
 
   // Stepping state
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(steps.length - 1);
@@ -250,20 +261,21 @@ export const PlaygroundView: React.FC = () => {
   const codeLines = code.split('\n');
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)] bg-slate-950 text-slate-100">
+    <div className="flex flex-col min-h-[calc(100vh-4rem)] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
       {/* Top Controls Toolbar */}
-      <div className="bg-slate-900 border-b border-slate-800 p-3 sm:p-4 space-y-3">
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-3 sm:p-4 space-y-3 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
           {/* Left Group: Language & Sample Code */}
           <div className="flex flex-wrap items-center gap-2">
             <select
               value={language}
               onChange={(e: any) => setLanguage(e.target.value)}
-              className="bg-slate-950 border border-slate-800 text-xs font-semibold px-3 py-1.5 rounded-xl text-slate-200 focus:outline-none focus:border-indigo-500"
+              className="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-base sm:text-xs font-semibold px-3 py-1.5 rounded-xl text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500"
               id="playground-language-select"
             >
-              <option value="python">PY Python</option>
+              <option value="c">C C Program</option>
               <option value="javascript">JS JavaScript</option>
+              <option value="python">PY Python</option>
               <option value="cpp">C++ C++</option>
               <option value="java">JAVA Java</option>
               <option value="typescript">TS TypeScript</option>
@@ -272,7 +284,7 @@ export const PlaygroundView: React.FC = () => {
             <select
               value={selectedPresetId}
               onChange={(e) => handleSelectPreset(e.target.value)}
-              className="bg-slate-950 border border-slate-800 text-xs font-medium px-3 py-1.5 rounded-xl text-indigo-300 focus:outline-none focus:border-indigo-500"
+              className="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-base sm:text-xs font-medium px-3 py-1.5 rounded-xl text-indigo-700 dark:text-indigo-300 focus:outline-none focus:border-indigo-500 max-w-[200px] sm:max-w-none truncate"
               id="playground-preset-select"
             >
               <option value="" disabled>
@@ -280,7 +292,7 @@ export const PlaygroundView: React.FC = () => {
               </option>
               {PRESET_CODES.map((p) => (
                 <option key={p.id} value={p.id}>
-                  Sample: {p.name}
+                  Sample code: {p.name}
                 </option>
               ))}
             </select>
@@ -289,7 +301,7 @@ export const PlaygroundView: React.FC = () => {
               onClick={handleVisualizeExecution}
               disabled={isParsingCode}
               id="visualize-execution-btn"
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition-all disabled:opacity-50"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition-all disabled:opacity-50"
             >
               {isParsingCode ? (
                 <span className="animate-spin w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full" />
@@ -301,12 +313,12 @@ export const PlaygroundView: React.FC = () => {
           </div>
 
           {/* Middle Group: Step & Playback Controls */}
-          <div className="flex items-center gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+          <div className="flex flex-wrap items-center gap-2 bg-slate-100 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-300 dark:border-slate-800">
             <button
               onClick={() => setCurrentStepIndex(0)}
               title="Reset to Start"
               id="step-reset-btn"
-              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+              className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
@@ -314,7 +326,7 @@ export const PlaygroundView: React.FC = () => {
               onClick={() => setCurrentStepIndex((prev) => Math.max(0, prev - 1))}
               disabled={currentStepIndex === 0}
               id="step-back-btn"
-              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white disabled:opacity-40 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 transition-colors"
             >
               <SkipBack className="w-3.5 h-3.5" />
             </button>
@@ -329,51 +341,72 @@ export const PlaygroundView: React.FC = () => {
               onClick={() => setCurrentStepIndex((prev) => Math.min(steps.length - 1, prev + 1))}
               disabled={currentStepIndex === steps.length - 1}
               id="step-forward-btn"
-              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white disabled:opacity-40 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 transition-colors"
             >
               <SkipForward className="w-3.5 h-3.5" />
             </button>
 
             {/* Speed Buttons */}
-            <div className="flex items-center gap-1 border-l border-slate-800 pl-2">
+            <div className="flex items-center gap-1 border-l border-slate-300 dark:border-slate-800 pl-2">
               <span className="text-[10px] text-slate-500 mr-1 font-mono">Speed:</span>
               {[0.5, 1, 2, 4].map((s) => (
                 <button
                   key={s}
                   onClick={() => setSpeed(s)}
-                  className={`px-1.5 py-0.5 text-[10px] rounded font-mono font-medium transition-colors ${speed === s ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'
-                    }`}
+                  className={`px-1.5 py-0.5 text-[10px] rounded font-mono font-medium transition-colors ${
+                    speed === s ? 'bg-indigo-600 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                  }`}
                 >
                   {s}x
                 </button>
               ))}
             </div>
 
+            <button
+              onClick={() => {
+                if (!isPlaying) setIsPlaying(true);
+              }}
+              id="run-step-by-step-btn"
+              className="ml-1 px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
+            >
+              Run Step-by-Step
+            </button>
+
             {/* Step Counter */}
-            <div className="border-l border-slate-800 pl-2 text-xs font-mono font-semibold text-indigo-300">
+            <div className="border-l border-slate-300 dark:border-slate-800 pl-2 text-xs font-mono font-semibold text-indigo-700 dark:text-indigo-300">
               Step {currentStepIndex + 1}/{steps.length}
             </div>
           </div>
 
-          {/* Right Group: Action Share / Ask AI */}
+          {/* Right Group: Action Share / Tweet */}
           <div className="flex items-center gap-2">
             <button
               onClick={handleAskAiExplain}
               id="ask-ai-tutor-btn"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 hover:bg-purple-500/20 text-xs font-semibold transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/30 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-500/20 text-xs font-semibold transition-all"
             >
-              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+              <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
               <span>AI Tutor</span>
             </button>
 
             <button
               onClick={handleCopyLink}
               id="share-link-btn"
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 hover:bg-slate-800 text-xs font-medium transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 text-xs font-medium transition-colors"
             >
-              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
-              <span>{copiedLink ? 'Copied!' : 'Share'}</span>
+              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
+              <span>{copiedLink ? 'Copied!' : 'Share Visualization'}</span>
             </button>
+
+            <a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('Visualizing code execution step-by-step on Code Visualizer!')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 text-xs font-medium transition-colors"
+            >
+              <Twitter className="w-3.5 h-3.5 text-sky-500 fill-sky-500" />
+              <span>Tweet</span>
+            </a>
           </div>
         </div>
 
@@ -399,43 +432,43 @@ export const PlaygroundView: React.FC = () => {
       </div>
 
       {/* Summary Metric Strip Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-3 bg-slate-950 border-b border-slate-800 text-xs font-mono">
-        <div className="bg-slate-900 border border-slate-800/80 p-2.5 rounded-xl flex items-center justify-between">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-3 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-xs font-mono">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 p-2.5 rounded-xl flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
-            <Workflow className="w-4 h-4 text-purple-400" />
-            <span className="text-slate-400">Call Stack</span>
+            <Workflow className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+            <span className="text-slate-600 dark:text-slate-400">Call Stack</span>
           </div>
-          <span className="font-bold text-slate-100 bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded border border-purple-500/30">
+          <span className="font-bold text-slate-900 dark:text-slate-100 bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded border border-purple-200 dark:border-purple-500/30">
             {currentStep.callStack.length} frames
           </span>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800/80 p-2.5 rounded-xl flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 p-2.5 rounded-xl flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
-            <Terminal className="w-4 h-4 text-blue-400" />
-            <span className="text-slate-400">Variables</span>
+            <Terminal className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-slate-600 dark:text-slate-400">Variables</span>
           </div>
-          <span className="font-bold text-slate-100 bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded border border-blue-500/30">
+          <span className="font-bold text-slate-900 dark:text-slate-100 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-500/30">
             {currentStep.variables.length} tracked
           </span>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800/80 p-2.5 rounded-xl flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 p-2.5 rounded-xl flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
-            <Cpu className="w-4 h-4 text-emerald-400" />
-            <span className="text-slate-400">Stack Memory</span>
+            <Cpu className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span className="text-slate-600 dark:text-slate-400">Stack Memory</span>
           </div>
-          <span className="font-bold text-slate-100 bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">
+          <span className="font-bold text-slate-900 dark:text-slate-100 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/30">
             {currentStep.stackMemory.length} blocks
           </span>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800/80 p-2.5 rounded-xl flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 p-2.5 rounded-xl flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
-            <Database className="w-4 h-4 text-amber-400" />
-            <span className="text-slate-400">Heap Memory</span>
+            <Database className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            <span className="text-slate-600 dark:text-slate-400">Heap Memory</span>
           </div>
-          <span className="font-bold text-slate-100 bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">
+          <span className="font-bold text-slate-900 dark:text-slate-100 bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-500/30">
             {currentStep.heapMemory.length} objects
           </span>
         </div>
@@ -444,16 +477,17 @@ export const PlaygroundView: React.FC = () => {
       {/* Main Split Layout: Left Code Editor | Right Debugger & Inspector */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden min-h-[500px]">
         {/* Left Side: Interactive Code Editor / Visualizer (Col 6) */}
-        <div className="lg:col-span-6 bg-slate-950 border-r border-slate-800 flex flex-col font-mono text-xs">
-          <div className="bg-slate-900/90 px-3 py-2 border-b border-slate-800 flex items-center justify-between text-slate-300 gap-2">
-            <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+        <div className="lg:col-span-6 bg-slate-100 dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 flex flex-col font-mono text-xs">
+          <div className="bg-white dark:bg-slate-900/90 px-3 py-2 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-slate-800 dark:text-slate-300 gap-2">
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
               <button
                 onClick={() => setEditorMode('visualizer')}
                 id="editor-mode-visualizer-btn"
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all ${editorMode === 'visualizer'
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  editorMode === 'visualizer'
                     ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
-                  }`}
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                }`}
               >
                 <Code2 className="w-3.5 h-3.5" />
                 <span>Visualizer View</span>
@@ -461,10 +495,11 @@ export const PlaygroundView: React.FC = () => {
               <button
                 onClick={() => setEditorMode('edit')}
                 id="editor-mode-edit-btn"
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all ${editorMode === 'edit'
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  editorMode === 'edit'
                     ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
-                  }`}
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                }`}
               >
                 <Terminal className="w-3.5 h-3.5" />
                 <span>Edit Code Mode</span>
@@ -472,7 +507,7 @@ export const PlaygroundView: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-slate-400 hidden sm:inline">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 hidden sm:inline">
                 {codeLines.length} lines
               </span>
               <button
@@ -484,7 +519,7 @@ export const PlaygroundView: React.FC = () => {
                     setEditorMode('edit');
                   }
                 }}
-                className="px-2.5 py-1 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/30 text-[11px] font-semibold transition-colors"
+                className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-500/15 border border-indigo-200 dark:border-indigo-500/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/30 text-[11px] font-semibold transition-colors"
               >
                 {editorMode === 'edit' ? 'Run & Visualize' : 'Edit Source'}
               </button>
@@ -494,7 +529,7 @@ export const PlaygroundView: React.FC = () => {
           {/* VIEW MODE 1: VISUALIZER VIEW */}
           {editorMode === 'visualizer' ? (
             <div className="flex-1 flex flex-col justify-between overflow-hidden">
-              <div className="flex-1 overflow-y-auto p-2 space-y-1 relative bg-slate-950">
+              <div className="flex-1 overflow-y-auto p-2 space-y-1 relative bg-white dark:bg-slate-950">
                 {codeLines.map((lineText, idx) => {
                   const lineNum = idx + 1;
                   const isCurrentLine = currentStep.line === lineNum;
@@ -503,15 +538,16 @@ export const PlaygroundView: React.FC = () => {
                   return (
                     <div
                       key={lineNum}
-                      className={`flex items-center gap-3 px-2 py-1 rounded transition-colors ${isCurrentLine
-                          ? 'bg-indigo-500/20 border-l-4 border-indigo-400 font-semibold text-white shadow-sm'
-                          : 'hover:bg-slate-900/60 text-slate-300'
-                        }`}
+                      className={`flex items-center gap-3 px-2 py-1 rounded transition-colors ${
+                        isCurrentLine
+                          ? 'bg-indigo-100 dark:bg-indigo-500/20 border-l-4 border-indigo-600 dark:border-indigo-400 font-semibold text-slate-900 dark:text-white shadow-sm'
+                          : 'hover:bg-slate-100 dark:hover:bg-slate-900/60 text-slate-700 dark:text-slate-300'
+                      }`}
                     >
                       {/* Breakpoint / Line Number Gutter */}
                       <button
                         onClick={() => toggleBreakpoint(lineNum)}
-                        className="flex items-center justify-center w-6 text-[11px] text-slate-500 hover:text-indigo-400 font-mono select-none"
+                        className="flex items-center justify-center w-6 text-[11px] text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 font-mono select-none"
                         title="Toggle Breakpoint"
                       >
                         {hasBreakpoint ? (
@@ -523,7 +559,7 @@ export const PlaygroundView: React.FC = () => {
 
                       {/* Active Executing Arrow */}
                       <div className="w-4 flex items-center justify-center select-none">
-                        {isCurrentLine && <Play className="w-3 h-3 fill-indigo-400 text-indigo-400 animate-pulse" />}
+                        {isCurrentLine && <Play className="w-3 h-3 fill-indigo-600 text-indigo-600 dark:fill-indigo-400 dark:text-indigo-400 animate-pulse" />}
                       </div>
 
                       {/* Line Text */}
@@ -534,37 +570,16 @@ export const PlaygroundView: React.FC = () => {
                   );
                 })}
               </div>
-
-              {/* Quick Inline Editor Bar */}
-              <div className="p-3 bg-slate-900/90 border-t border-slate-800 space-y-2">
-                <div className="flex items-center justify-between text-[11px] text-slate-400">
-                  <span className="font-semibold text-slate-300">Quick Code Editor & Modifier:</span>
-                  <button
-                    onClick={() => setEditorMode('edit')}
-                    className="text-indigo-400 hover:text-indigo-300 text-[10px] underline font-sans"
-                  >
-                    Open Fullscreen Editor →
-                  </button>
-                </div>
-                <textarea
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  rows={3}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 resize-none"
-                  placeholder="Edit your code directly here..."
-                  id="code-editor-textarea-quick"
-                />
-              </div>
             </div>
           ) : (
             /* VIEW MODE 2: FULL CODE EDITOR MODE */
-            <div className="flex-1 flex flex-col p-3 space-y-3 bg-slate-950">
-              <div className="flex items-center justify-between text-xs text-slate-400 font-sans">
+            <div className="flex-1 flex flex-col p-3 space-y-3 bg-slate-50 dark:bg-slate-950">
+              <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-sans">
                 <span>Type or paste your {language.toUpperCase()} code below:</span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setCode('')}
-                    className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-400 hover:text-white text-[11px]"
+                    className="px-2.5 py-1 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px]"
                   >
                     Clear
                   </button>
@@ -573,7 +588,7 @@ export const PlaygroundView: React.FC = () => {
                       const found = PRESET_CODES.find((p) => p.id === selectedPresetId);
                       if (found) setCode(found.code);
                     }}
-                    className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-indigo-400 hover:text-indigo-300 text-[11px]"
+                    className="px-2.5 py-1 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-indigo-600 dark:text-indigo-400 hover:underline text-[11px]"
                   >
                     Reset Code
                   </button>
@@ -583,7 +598,7 @@ export const PlaygroundView: React.FC = () => {
               <textarea
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="flex-1 w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 text-xs font-mono text-slate-100 focus:outline-none focus:border-indigo-500 resize-none leading-relaxed min-h-[300px]"
+                className="flex-1 w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-2xl p-4 text-xs font-mono text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500 resize-none leading-relaxed min-h-[300px]"
                 placeholder="Type your code here..."
                 id="code-editor-textarea-full"
               />
@@ -609,16 +624,17 @@ export const PlaygroundView: React.FC = () => {
         </div>
 
         {/* Right Side: Debugger / Engine Internals / AI Tutor (Col 6) */}
-        <div className="lg:col-span-6 bg-slate-950 flex flex-col border-t lg:border-t-0">
+        <div className="lg:col-span-6 bg-slate-50 dark:bg-slate-950 flex flex-col border-t lg:border-t-0">
           {/* Tabs */}
-          <div className="flex items-center bg-slate-900 border-b border-slate-800 px-2 pt-2 gap-1">
+          <div className="flex items-center bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-2 pt-2 gap-1">
             <button
               onClick={() => setRightTab('debugger')}
               id="tab-debugger"
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-t-xl text-xs font-semibold border-t border-x transition-colors ${rightTab === 'debugger'
-                  ? 'bg-slate-950 border-slate-800 text-indigo-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
-                }`}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-t-xl text-xs font-semibold border-t border-x transition-colors ${
+                rightTab === 'debugger'
+                  ? 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-indigo-600 dark:text-indigo-400'
+                  : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
             >
               <Workflow className="w-3.5 h-3.5" />
               <span>Debugger</span>
@@ -627,10 +643,11 @@ export const PlaygroundView: React.FC = () => {
             <button
               onClick={() => setRightTab('engine')}
               id="tab-engine"
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-t-xl text-xs font-semibold border-t border-x transition-colors ${rightTab === 'engine'
-                  ? 'bg-slate-950 border-slate-800 text-indigo-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
-                }`}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-t-xl text-xs font-semibold border-t border-x transition-colors ${
+                rightTab === 'engine'
+                  ? 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-indigo-600 dark:text-indigo-400'
+                  : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
             >
               <Cpu className="w-3.5 h-3.5" />
               <span>Engine Internals</span>
@@ -639,12 +656,13 @@ export const PlaygroundView: React.FC = () => {
             <button
               onClick={() => setRightTab('ai-tutor')}
               id="tab-ai-tutor"
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-t-xl text-xs font-semibold border-t border-x transition-colors ${rightTab === 'ai-tutor'
-                  ? 'bg-slate-950 border-slate-800 text-purple-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
-                }`}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-t-xl text-xs font-semibold border-t border-x transition-colors ${
+                rightTab === 'ai-tutor'
+                  ? 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-purple-600 dark:text-purple-400'
+                  : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+              <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
               <span>AI Explanation</span>
             </button>
           </div>
@@ -655,144 +673,164 @@ export const PlaygroundView: React.FC = () => {
             {rightTab === 'debugger' && (
               <div className="space-y-4">
                 {/* Current Step Explanation Box */}
-                <div className="bg-indigo-950/40 border border-indigo-500/30 p-3.5 rounded-2xl flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
-                  <div>
-                    <div className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1">
-                      Step Explanation
-                    </div>
-                    <p className="text-xs text-slate-200 leading-relaxed font-sans">
-                      {currentStep.explanation}
-                    </p>
+                <div className="bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/30 p-3 rounded-xl flex items-center gap-2.5 shadow-sm">
+                  <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                  <div className="text-xs text-slate-800 dark:text-slate-200 font-sans font-medium leading-tight">
+                    <span className="font-bold text-indigo-700 dark:text-indigo-300 mr-1.5 uppercase tracking-wide text-[11px]">Step {currentStepIndex + 1}:</span>
+                    {currentStep.explanation}
                   </div>
                 </div>
 
-                {/* Call Stack Section */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-2">
-                    <span className="flex items-center gap-1.5">
-                      <Workflow className="w-4 h-4 text-purple-400" /> Call Stack
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      {currentStep.callStack.length} frame(s)
-                    </span>
-                  </div>
-
-                  <div className="space-y-2 font-mono text-xs">
-                    {currentStep.callStack.length === 0 ? (
-                      <p className="text-slate-500 italic text-xs">Call Stack is empty.</p>
-                    ) : (
-                      currentStep.callStack.map((frame, idx) => (
-                        <div
-                          key={frame.id || idx}
-                          className={`p-2.5 rounded-xl border flex items-center justify-between transition-colors ${idx === currentStep.callStack.length - 1
-                              ? 'bg-indigo-950/60 border-indigo-500/50 text-indigo-200 font-bold'
-                              : 'bg-slate-950 border-slate-800 text-slate-400'
-                            }`}
-                        >
-                          <div>
-                            <span>{frame.name}</span>
-                            {frame.params && <span className="text-[11px] text-slate-400 font-normal ml-2">({frame.params})</span>}
-                          </div>
-                          <span className="text-[10px] bg-slate-900 border border-slate-800 px-2 py-0.5 rounded text-indigo-300">
-                            Line {frame.line}
-                          </span>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-
-                {/* Variables Panel Table */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-2">
-                    <span className="flex items-center gap-1.5">
-                      <Terminal className="w-4 h-4 text-blue-400" /> Tracked Variables
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      {currentStep.variables.length} active
-                    </span>
-                  </div>
-
-                  {currentStep.variables.length === 0 ? (
-                    <p className="text-slate-500 italic text-xs font-mono">No active variables in current scope.</p>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left font-mono text-xs">
-                        <thead>
-                          <tr className="border-b border-slate-800 text-slate-400 text-[11px]">
-                            <th className="pb-2">Name</th>
-                            <th className="pb-2">Value</th>
-                            <th className="pb-2">Type</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-800/60">
-                          {currentStep.variables.map((v, i) => (
-                            <tr key={i} className="text-slate-200">
-                              <td className="py-2 text-indigo-400 font-bold">{v.name}</td>
-                              <td className="py-2 text-emerald-300 max-w-[150px] truncate">{v.value}</td>
-                              <td className="py-2 text-slate-400 text-[10px]">{v.type}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                {/* 2x2 Debugger Grid Layout Matching Image */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
+                  {/* 1. CALL STACK */}
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 flex flex-col min-h-[160px] shadow-sm">
+                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2 mb-2">
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                        <Workflow className="w-3.5 h-3.5 text-indigo-500" /> CALL STACK
+                      </span>
+                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        {currentStep.callStack.length}
+                      </span>
                     </div>
-                  )}
-                </div>
-
-                {/* Stack & Heap Memory Allocation Section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {/* Stack Memory */}
-                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2">
-                    <div className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-800 pb-1.5">
-                      <Cpu className="w-3.5 h-3.5 text-emerald-400" /> Stack Memory
-                    </div>
-                    <div className="space-y-1.5 font-mono text-[11px]">
-                      {currentStep.stackMemory.length === 0 ? (
-                        <p className="text-slate-500 italic">No stack blocks.</p>
+                    <div className="flex-1 flex flex-col justify-center">
+                      {currentStep.callStack.length === 0 ? (
+                        <p className="text-center text-slate-400 dark:text-slate-500 text-xs my-auto italic">No frames on stack</p>
                       ) : (
-                        currentStep.stackMemory.map((block, idx) => (
-                          <div key={idx} className="bg-slate-950 border border-slate-800 p-2 rounded-lg flex items-center justify-between">
-                            <span className="text-emerald-400">{block.address}</span>
-                            <span className="text-slate-300">{block.name}</span>
-                          </div>
-                        ))
+                        <div className="space-y-1.5">
+                          {currentStep.callStack.map((frame, idx) => (
+                            <div key={frame.id || idx} className="flex items-center justify-between p-2 rounded bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-[11px]">
+                              <span className="font-semibold text-slate-800 dark:text-slate-200">{frame.name}</span>
+                              <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-950/80 px-1.5 py-0.5 rounded">Line {frame.line}</span>
+                            </div>
+                          ))}
+                        </div>
                       )}
                     </div>
+                  </div>
+
+                  {/* 2. VARIABLES */}
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 flex flex-col min-h-[160px] shadow-sm">
+                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2 mb-2">
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                        <Terminal className="w-3.5 h-3.5 text-blue-500" /> VARIABLES
+                      </span>
+                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        {currentStep.variables.length}
+                      </span>
+                    </div>
+                    <div className="flex-1 flex flex-col justify-center">
+                      {currentStep.variables.length === 0 ? (
+                        <p className="text-center text-slate-400 dark:text-slate-500 text-xs my-auto italic">No variables in scope</p>
+                      ) : (
+                        <div className="space-y-1 max-h-[120px] overflow-y-auto">
+                          {currentStep.variables.map((v, idx) => (
+                            <div key={idx} className="flex items-center justify-between p-1.5 rounded bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-[11px]">
+                              <span className="text-indigo-600 dark:text-indigo-400 font-bold">{v.name}</span>
+                              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{v.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 3. BREAKPOINTS */}
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 flex flex-col min-h-[160px] shadow-sm">
+                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2 mb-2">
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                        <AlertCircle className="w-3.5 h-3.5 text-rose-500" /> BREAKPOINTS
+                      </span>
+                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        {breakpoints.length}
+                      </span>
+                    </div>
+                    <div className="flex-1 flex flex-col justify-center">
+                      {breakpoints.length === 0 ? (
+                        <p className="text-center text-slate-400 dark:text-slate-500 text-xs my-auto italic">Click line numbers to add breakpoints</p>
+                      ) : (
+                        <div className="space-y-1 max-h-[120px] overflow-y-auto">
+                          {breakpoints.map((lineNum) => (
+                            <div key={lineNum} className="flex items-center justify-between p-1.5 rounded bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-[11px]">
+                              <span className="flex items-center gap-1.5 text-rose-500 font-bold">
+                                <span className="w-2 h-2 rounded-full bg-rose-500 inline-block" /> Line {lineNum}
+                              </span>
+                              <button
+                                onClick={() => toggleBreakpoint(lineNum)}
+                                className="text-slate-400 hover:text-rose-500 text-[10px]"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 4. CONSOLE */}
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 flex flex-col min-h-[160px] shadow-sm">
+                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2 mb-2">
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                        <Terminal className="w-3.5 h-3.5 text-emerald-500" /> &gt; CONSOLE
+                      </span>
+                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        {accumulatedConsoleOutput ? accumulatedConsoleOutput.split('\n').filter(Boolean).length : 0}
+                      </span>
+                    </div>
+                    <div className="flex-1 flex flex-col justify-center bg-slate-950 p-2.5 rounded-lg border border-slate-800/80 overflow-y-auto max-h-[110px]">
+                      {accumulatedConsoleOutput ? (
+                        <p className="text-emerald-400 text-xs font-mono whitespace-pre-wrap">{accumulatedConsoleOutput}</p>
+                      ) : (
+                        <p className="text-center text-slate-500 text-xs my-auto italic">No output yet - run your code</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stack & Heap Memory Allocation Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs pt-1">
+                  {/* Stack Memory */}
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 space-y-2 shadow-sm">
+                    <div className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-1.5">
+                      <span className="flex items-center gap-1.5">
+                        <Cpu className="w-3.5 h-3.5 text-emerald-500" /> Stack Memory
+                      </span>
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">{currentStep.stackMemory.length} blocks</span>
+                    </div>
+                    {currentStep.stackMemory.length === 0 ? (
+                      <p className="text-slate-400 dark:text-slate-500 text-[11px] italic">No stack frames allocated</p>
+                    ) : (
+                      <div className="space-y-1 max-h-[120px] overflow-y-auto">
+                        {currentStep.stackMemory.map((block, idx) => (
+                          <div key={idx} className="flex items-center justify-between p-1.5 rounded bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-[11px]">
+                            <span className="text-emerald-600 dark:text-emerald-400 font-bold">{block.address}</span>
+                            <span className="text-slate-700 dark:text-slate-300">{block.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Heap Memory */}
-                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2">
-                    <div className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-800 pb-1.5">
-                      <Database className="w-3.5 h-3.5 text-amber-400" /> Heap Memory
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 space-y-2 shadow-sm">
+                    <div className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-1.5">
+                      <span className="flex items-center gap-1.5">
+                        <Database className="w-3.5 h-3.5 text-amber-500" /> Heap Memory
+                      </span>
+                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold">{currentStep.heapMemory.length} objects</span>
                     </div>
-                    <div className="space-y-1.5 font-mono text-[11px]">
-                      {currentStep.heapMemory.length === 0 ? (
-                        <p className="text-slate-500 italic">No heap objects allocated.</p>
-                      ) : (
-                        currentStep.heapMemory.map((obj, idx) => (
-                          <div key={idx} className="bg-slate-950 border border-slate-800 p-2 rounded-lg flex items-center justify-between">
-                            <span className="text-amber-400">{obj.address}</span>
-                            <span className="text-slate-300 truncate max-w-[120px]">{obj.value}</span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Console Output Log */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2">
-                  <div className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center justify-between border-b border-slate-800 pb-2">
-                    <span className="flex items-center gap-1.5">
-                      <Terminal className="w-4 h-4 text-indigo-400" /> Console Standard Output
-                    </span>
-                  </div>
-                  <div className="bg-slate-950 border border-slate-800/80 p-3 rounded-xl font-mono text-xs text-emerald-400 min-h-[70px] max-h-[180px] overflow-y-auto whitespace-pre-wrap leading-relaxed">
-                    {accumulatedConsoleOutput ? (
-                      accumulatedConsoleOutput
+                    {currentStep.heapMemory.length === 0 ? (
+                      <p className="text-slate-400 dark:text-slate-500 text-[11px] italic">No heap objects allocated</p>
                     ) : (
-                      <span className="text-slate-600 italic">&gt; Output stream empty</span>
+                      <div className="space-y-1 max-h-[120px] overflow-y-auto">
+                        {currentStep.heapMemory.map((obj, idx) => (
+                          <div key={idx} className="flex items-center justify-between p-1.5 rounded bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-[11px]">
+                            <span className="text-amber-600 dark:text-amber-400 font-bold">{obj.address}</span>
+                            <span className="text-slate-700 dark:text-slate-300 truncate max-w-[120px]">{obj.value}</span>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -801,42 +839,42 @@ export const PlaygroundView: React.FC = () => {
 
             {/* TAB 2: ENGINE INTERNALS */}
             {rightTab === 'engine' && (
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-5">
-                <div className="border-b border-slate-800 pb-3">
-                  <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                    <Cpu className="w-4 h-4 text-indigo-400" /> Runtime Engine Internals
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-5 shadow-sm">
+                <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <Cpu className="w-4 h-4 text-indigo-600 dark:text-indigo-400" /> Runtime Engine Internals
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     How the {language.toUpperCase()} engine processes code, memory frames, and task queues.
                   </p>
                 </div>
 
                 {/* Event Loop Visual Diagram */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
-                  <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                    <div className="font-bold text-indigo-300">1. Call Stack</div>
-                    <p className="text-[11px] text-slate-400">
+                  <div className="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <div className="font-bold text-indigo-700 dark:text-indigo-300">1. Call Stack</div>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400">
                       LIFO execution frame container. Currently evaluating line {currentStep.line}.
                     </p>
                   </div>
 
-                  <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                    <div className="font-bold text-purple-300">2. Heap Memory</div>
-                    <p className="text-[11px] text-slate-400">
+                  <div className="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <div className="font-bold text-purple-700 dark:text-purple-300">2. Heap Memory</div>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400">
                       Stores dynamically allocated objects, dictionaries, arrays, and closures.
                     </p>
                   </div>
 
-                  <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                    <div className="font-bold text-emerald-300">3. Microtask Queue</div>
-                    <p className="text-[11px] text-slate-400">
+                  <div className="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <div className="font-bold text-emerald-700 dark:text-emerald-300">3. Microtask Queue</div>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400">
                       Promise callbacks and process.nextTick callbacks executed before event loop ticks.
                     </p>
                   </div>
 
-                  <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                    <div className="font-bold text-amber-300">4. Garbage Collector</div>
-                    <p className="text-[11px] text-slate-400">
+                  <div className="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <div className="font-bold text-amber-700 dark:text-amber-300">4. Garbage Collector</div>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400">
                       Generational GC tracking unreferenced heap objects for reclamation.
                     </p>
                   </div>
@@ -846,11 +884,11 @@ export const PlaygroundView: React.FC = () => {
 
             {/* TAB 3: AI TUTOR */}
             {rightTab === 'ai-tutor' && (
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-purple-400" />
-                    <h3 className="text-sm font-bold text-slate-100">Gemini AI Code Tutor</h3>
+                    <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Gemini AI Code Tutor</h3>
                   </div>
                   <button
                     onClick={handleAskAiExplain}
@@ -864,18 +902,18 @@ export const PlaygroundView: React.FC = () => {
                 {isAiLoading ? (
                   <div className="p-8 text-center space-y-3">
                     <div className="w-8 h-8 border-3 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                    <p className="text-xs text-purple-300 font-mono">
+                    <p className="text-xs text-purple-700 dark:text-purple-300 font-mono">
                       Gemini is inspecting Call Stack, Heap allocations, and active variables...
                     </p>
                   </div>
                 ) : aiExplanation ? (
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-200 leading-relaxed whitespace-pre-line font-sans space-y-2">
+                  <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line font-sans space-y-2">
                     {aiExplanation}
                   </div>
                 ) : (
-                  <div className="text-center p-6 text-slate-400 space-y-2">
+                  <div className="text-center p-6 text-slate-500 dark:text-slate-400 space-y-2">
                     <p className="text-xs">
-                      Click <strong className="text-purple-300">"Ask AI to Explain Step"</strong> to receive an in-depth plain English explanation of memory and execution for Step {currentStepIndex + 1}.
+                      Click <strong className="text-purple-700 dark:text-purple-300">"Ask AI to Explain Step"</strong> to receive an in-depth plain English explanation of memory and execution for Step {currentStepIndex + 1}.
                     </p>
                   </div>
                 )}

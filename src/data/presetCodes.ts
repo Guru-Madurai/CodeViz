@@ -392,6 +392,827 @@ int main() {
         explanation: 'Explicitly freed heap memory at 0x00FE90 using delete operator.'
       }
     ]
+  },
+  {
+    id: 'c-for-loop',
+    name: 'C - Simple For Loop (Sum Calculation)',
+    language: 'c',
+    description: 'Calculates cumulative sum from 1 to 5 using a standard C for-loop.',
+    code: `// C - Simple For Loop Example
+#include <stdio.h>
+
+int main() {
+    int sum = 0;
+    int n = 5;
+    
+    printf("Starting sum calculation...\n");
+    for (int i = 1; i <= n; i++) {
+        sum += i;
+        printf("i = %d, current sum = %d\n", i, sum);
+    }
+    
+    printf("Final Sum = %d\n", sum);
+    return 0;
+}`,
+    steps: [
+      {
+        stepNumber: 1,
+        line: 5,
+        codeLine: 'int sum = 0;',
+        callStack: [{ id: 'f1', name: 'main()', line: 5 }],
+        variables: [{ name: 'sum', value: '0', type: 'int' }],
+        stackMemory: [{ address: '0x7ffc00', name: 'sum', value: '0' }],
+        heapMemory: [],
+        consoleOutput: '',
+        explanation: 'Initialized local stack variable sum = 0.'
+      },
+      {
+        stepNumber: 2,
+        line: 6,
+        codeLine: 'int n = 5;',
+        callStack: [{ id: 'f1', name: 'main()', line: 6 }],
+        variables: [
+          { name: 'sum', value: '0', type: 'int' },
+          { name: 'n', value: '5', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc00', name: 'sum', value: '0' },
+          { address: '0x7ffc04', name: 'n', value: '5' }
+        ],
+        heapMemory: [],
+        explanation: 'Initialized limit variable n = 5.'
+      },
+      {
+        stepNumber: 3,
+        line: 8,
+        codeLine: 'printf("Starting sum calculation...\\n");',
+        callStack: [{ id: 'f1', name: 'main()', line: 8 }],
+        variables: [
+          { name: 'sum', value: '0', type: 'int' },
+          { name: 'n', value: '5', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc00', name: 'sum', value: '0' },
+          { address: '0x7ffc04', name: 'n', value: '5' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'Starting sum calculation...',
+        explanation: 'Printed header message to stdout.'
+      },
+      {
+        stepNumber: 4,
+        line: 9,
+        codeLine: 'for (int i = 1; i <= n; i++)',
+        callStack: [{ id: 'f1', name: 'main()', line: 9 }],
+        variables: [
+          { name: 'sum', value: '0', type: 'int' },
+          { name: 'n', value: '5', type: 'int' },
+          { name: 'i', value: '1', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc00', name: 'sum', value: '0' },
+          { address: '0x7ffc04', name: 'n', value: '5' },
+          { address: '0x7ffc08', name: 'i', value: '1' }
+        ],
+        heapMemory: [],
+        explanation: 'For loop started: initialized loop variable i = 1 (1 <= 5 is True).'
+      },
+      {
+        stepNumber: 5,
+        line: 10,
+        codeLine: 'sum += i;',
+        callStack: [{ id: 'f1', name: 'main()', line: 10 }],
+        variables: [
+          { name: 'sum', value: '1', type: 'int' },
+          { name: 'n', value: '5', type: 'int' },
+          { name: 'i', value: '1', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc00', name: 'sum', value: '1' },
+          { address: '0x7ffc04', name: 'n', value: '5' },
+          { address: '0x7ffc08', name: 'i', value: '1' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'i = 1, current sum = 1',
+        explanation: 'Added i=1 to sum. Updated sum = 1.'
+      },
+      {
+        stepNumber: 6,
+        line: 10,
+        codeLine: 'sum += i; // i = 2',
+        callStack: [{ id: 'f1', name: 'main()', line: 10 }],
+        variables: [
+          { name: 'sum', value: '3', type: 'int' },
+          { name: 'n', value: '5', type: 'int' },
+          { name: 'i', value: '2', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc00', name: 'sum', value: '3' },
+          { address: '0x7ffc04', name: 'n', value: '5' },
+          { address: '0x7ffc08', name: 'i', value: '2' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'i = 2, current sum = 3',
+        explanation: 'Loop iteration i=2: sum becomes 1 + 2 = 3.'
+      },
+      {
+        stepNumber: 7,
+        line: 10,
+        codeLine: 'sum += i; // i = 5',
+        callStack: [{ id: 'f1', name: 'main()', line: 10 }],
+        variables: [
+          { name: 'sum', value: '15', type: 'int' },
+          { name: 'n', value: '5', type: 'int' },
+          { name: 'i', value: '5', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc00', name: 'sum', value: '15' },
+          { address: '0x7ffc04', name: 'n', value: '5' },
+          { address: '0x7ffc08', name: 'i', value: '5' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'i = 5, current sum = 15',
+        explanation: 'Final iteration i=5: sum becomes 10 + 5 = 15.'
+      },
+      {
+        stepNumber: 8,
+        line: 13,
+        codeLine: 'printf("Final Sum = %d\\n", sum);',
+        callStack: [{ id: 'f1', name: 'main()', line: 13 }],
+        variables: [
+          { name: 'sum', value: '15', type: 'int' },
+          { name: 'n', value: '5', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc00', name: 'sum', value: '15' },
+          { address: '0x7ffc04', name: 'n', value: '5' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'Final Sum = 15',
+        explanation: 'For loop finished (i=6 > 5). Printed final sum = 15.'
+      }
+    ]
+  },
+  {
+    id: 'c-while-loop',
+    name: 'C - Simple While Loop (Factorial Countdown)',
+    language: 'c',
+    description: 'Computes factorial using a C while loop and decrements countdown variable.',
+    code: `// C - Simple While Loop Example
+#include <stdio.h>
+
+int main() {
+    int count = 5;
+    int factorial = 1;
+    
+    printf("Calculating factorial of %d using while loop...\n", count);
+    while (count > 0) {
+        factorial *= count;
+        printf("count = %d, partial factorial = %d\n", count, factorial);
+        count--;
+    }
+    
+    printf("Result: %d\n", factorial);
+    return 0;
+}`,
+    steps: [
+      {
+        stepNumber: 1,
+        line: 5,
+        codeLine: 'int count = 5;',
+        callStack: [{ id: 'f1', name: 'main()', line: 5 }],
+        variables: [
+          { name: 'count', value: '5', type: 'int' },
+          { name: 'factorial', value: '1', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc10', name: 'count', value: '5' },
+          { address: '0x7ffc14', name: 'factorial', value: '1' }
+        ],
+        heapMemory: [],
+        consoleOutput: '',
+        explanation: 'Initialized local variables count = 5 and factorial = 1.'
+      },
+      {
+        stepNumber: 2,
+        line: 9,
+        codeLine: 'while (count > 0)',
+        callStack: [{ id: 'f1', name: 'main()', line: 9 }],
+        variables: [
+          { name: 'count', value: '5', type: 'int' },
+          { name: 'factorial', value: '1', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc10', name: 'count', value: '5' },
+          { address: '0x7ffc14', name: 'factorial', value: '1' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'Calculating factorial of 5 using while loop...',
+        explanation: 'While loop condition evaluated: count (5) > 0 is True.'
+      },
+      {
+        stepNumber: 3,
+        line: 10,
+        codeLine: 'factorial *= count;',
+        callStack: [{ id: 'f1', name: 'main()', line: 10 }],
+        variables: [
+          { name: 'count', value: '5', type: 'int' },
+          { name: 'factorial', value: '5', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc10', name: 'count', value: '5' },
+          { address: '0x7ffc14', name: 'factorial', value: '5' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'count = 5, partial factorial = 5',
+        explanation: 'Multiplied factorial by count (1 * 5 = 5).'
+      },
+      {
+        stepNumber: 4,
+        line: 12,
+        codeLine: 'count--;',
+        callStack: [{ id: 'f1', name: 'main()', line: 12 }],
+        variables: [
+          { name: 'count', value: '4', type: 'int' },
+          { name: 'factorial', value: '5', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc10', name: 'count', value: '4' },
+          { address: '0x7ffc14', name: 'factorial', value: '5' }
+        ],
+        heapMemory: [],
+        explanation: 'Decremented count to 4.'
+      },
+      {
+        stepNumber: 5,
+        line: 10,
+        codeLine: 'factorial *= count; // count = 1',
+        callStack: [{ id: 'f1', name: 'main()', line: 10 }],
+        variables: [
+          { name: 'count', value: '1', type: 'int' },
+          { name: 'factorial', value: '120', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc10', name: 'count', value: '1' },
+          { address: '0x7ffc14', name: 'factorial', value: '120' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'count = 1, partial factorial = 120',
+        explanation: 'Final iteration: factorial reached 5 * 4 * 3 * 2 * 1 = 120.'
+      },
+      {
+        stepNumber: 6,
+        line: 15,
+        codeLine: 'printf("Result: %d\\n", factorial);',
+        callStack: [{ id: 'f1', name: 'main()', line: 15 }],
+        variables: [
+          { name: 'count', value: '0', type: 'int' },
+          { name: 'factorial', value: '120', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc10', name: 'count', value: '0' },
+          { address: '0x7ffc14', name: 'factorial', value: '120' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'Result: 120',
+        explanation: 'While loop terminated (count = 0). Printed result: 120.'
+      }
+    ]
+  },
+  {
+    id: 'c-singly-linked-list',
+    name: 'C - Singly Linked List (struct Node & malloc)',
+    language: 'c',
+    description: 'Dynamic memory allocation with malloc and struct Node pointer linking in C.',
+    code: `// C - Singly Linked List Implementation
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int val) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = val;
+    newNode->next = NULL;
+    return newNode;
+}
+
+int main() {
+    struct Node* head = createNode(10);
+    head->next = createNode(20);
+    head->next->next = createNode(30);
+
+    printf("Traversing Singly Linked List:\n");
+    struct Node* curr = head;
+    while (curr != NULL) {
+        printf("%d -> ", curr->data);
+        curr = curr->next;
+    }
+    printf("NULL\n");
+    return 0;
+}`,
+    steps: [
+      {
+        stepNumber: 1,
+        line: 19,
+        codeLine: 'struct Node* head = createNode(10);',
+        callStack: [
+          { id: 'f1', name: 'main()', line: 19 },
+          { id: 'f2', name: 'createNode', line: 11, params: 'val=10' }
+        ],
+        variables: [{ name: 'val', value: '10', type: 'int' }],
+        stackMemory: [
+          { address: '0x7ffc20', name: 'head', value: '0x00A100' },
+          { address: '0x7ffc28', name: 'createNode frame', value: 'Active' }
+        ],
+        heapMemory: [{ address: '0x00A100', type: 'struct Node', value: '{ data: 10, next: NULL }' }],
+        explanation: 'Called malloc(sizeof(struct Node)). Allocated 16 bytes on Heap at address 0x00A100.'
+      },
+      {
+        stepNumber: 2,
+        line: 20,
+        codeLine: 'head->next = createNode(20);',
+        callStack: [{ id: 'f1', name: 'main()', line: 20 }],
+        variables: [{ name: 'head', value: '0x00A100', type: 'struct Node*' }],
+        stackMemory: [{ address: '0x7ffc20', name: 'head', value: '0x00A100' }],
+        heapMemory: [
+          { address: '0x00A100', type: 'struct Node', value: '{ data: 10, next: 0x00A110 }' },
+          { address: '0x00A110', type: 'struct Node', value: '{ data: 20, next: NULL }' }
+        ],
+        explanation: 'Allocated second node at Heap 0x00A110. Linked head->next = 0x00A110.'
+      },
+      {
+        stepNumber: 3,
+        line: 21,
+        codeLine: 'head->next->next = createNode(30);',
+        callStack: [{ id: 'f1', name: 'main()', line: 21 }],
+        variables: [{ name: 'head', value: '0x00A100', type: 'struct Node*' }],
+        stackMemory: [{ address: '0x7ffc20', name: 'head', value: '0x00A100' }],
+        heapMemory: [
+          { address: '0x00A100', type: 'struct Node', value: '{ data: 10, next: 0x00A110 }' },
+          { address: '0x00A110', type: 'struct Node', value: '{ data: 20, next: 0x00A120 }' },
+          { address: '0x00A120', type: 'struct Node', value: '{ data: 30, next: NULL }' }
+        ],
+        explanation: 'Allocated third node at Heap 0x00A120. Linked 2nd node -> 3rd node.'
+      },
+      {
+        stepNumber: 4,
+        line: 24,
+        codeLine: 'struct Node* curr = head;',
+        callStack: [{ id: 'f1', name: 'main()', line: 24 }],
+        variables: [
+          { name: 'head', value: '0x00A100', type: 'struct Node*' },
+          { name: 'curr', value: '0x00A100', type: 'struct Node*' }
+        ],
+        stackMemory: [
+          { address: '0x7ffc20', name: 'head', value: '0x00A100' },
+          { address: '0x7ffc28', name: 'curr', value: '0x00A100' }
+        ],
+        heapMemory: [
+          { address: '0x00A100', type: 'struct Node', value: '10' },
+          { address: '0x00A110', type: 'struct Node', value: '20' },
+          { address: '0x00A120', type: 'struct Node', value: '30' }
+        ],
+        consoleOutput: 'Traversing Singly Linked List:',
+        explanation: 'Initialized traversal pointer curr = head (0x00A100).'
+      },
+      {
+        stepNumber: 5,
+        line: 26,
+        codeLine: 'printf("%d -> ", curr->data);',
+        callStack: [{ id: 'f1', name: 'main()', line: 26 }],
+        variables: [
+          { name: 'curr', value: '0x00A100', type: 'struct Node*' },
+          { name: 'curr->data', value: '10', type: 'int' }
+        ],
+        stackMemory: [{ address: '0x7ffc28', name: 'curr', value: '0x00A100' }],
+        heapMemory: [{ address: '0x00A100', type: 'struct Node', value: '10' }],
+        consoleOutput: '10 -> 20 -> 30 -> NULL',
+        explanation: 'Traversed all 3 nodes printing values 10 -> 20 -> 30 -> NULL.'
+      }
+    ]
+  },
+  {
+    id: 'c-stack-implementation',
+    name: 'C - Stack Implementation (Array & Top Pointer)',
+    language: 'c',
+    description: 'Implements LIFO Stack data structure using array and top index pointer in C.',
+    code: `// C - Stack Implementation (LIFO)
+#include <stdio.h>
+
+#define MAX 5
+
+int stack[MAX];
+int top = -1;
+
+void push(int val) {
+    if (top < MAX - 1) {
+        top++;
+        stack[top] = val;
+        printf("Pushed: %d (top=%d)\n", val, top);
+    }
+}
+
+int pop() {
+    if (top >= 0) {
+        int val = stack[top];
+        top--;
+        printf("Popped: %d\n", val);
+        return val;
+    }
+    return -1;
+}
+
+int main() {
+    push(10);
+    push(20);
+    push(30);
+    pop();
+    printf("Current Top Element: %d\n", stack[top]);
+    return 0;
+}`,
+    steps: [
+      {
+        stepNumber: 1,
+        line: 7,
+        codeLine: 'int top = -1;',
+        callStack: [{ id: 'f1', name: 'main()', line: 28 }],
+        variables: [
+          { name: 'top', value: '-1', type: 'int (global)' },
+          { name: 'stack', value: '[0, 0, 0, 0, 0]', type: 'int[5]' }
+        ],
+        stackMemory: [{ address: '0x601020', name: 'top', value: '-1' }],
+        heapMemory: [],
+        consoleOutput: '',
+        explanation: 'Initialized global Stack buffer array[5] and empty top pointer index top = -1.'
+      },
+      {
+        stepNumber: 2,
+        line: 28,
+        codeLine: 'push(10);',
+        callStack: [
+          { id: 'f1', name: 'main()', line: 28 },
+          { id: 'f2', name: 'push', line: 11, params: 'val=10' }
+        ],
+        variables: [
+          { name: 'val', value: '10', type: 'int' },
+          { name: 'top', value: '0', type: 'int' },
+          { name: 'stack[0]', value: '10', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x601020', name: 'top', value: '0' },
+          { address: '0x601024', name: 'stack[0]', value: '10' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'Pushed: 10 (top=0)',
+        explanation: 'Incremented top to 0. Stored 10 at stack[0].'
+      },
+      {
+        stepNumber: 3,
+        line: 29,
+        codeLine: 'push(20);',
+        callStack: [
+          { id: 'f1', name: 'main()', line: 29 },
+          { id: 'f2', name: 'push', line: 11, params: 'val=20' }
+        ],
+        variables: [
+          { name: 'top', value: '1', type: 'int' },
+          { name: 'stack[1]', value: '20', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x601020', name: 'top', value: '1' },
+          { address: '0x601028', name: 'stack[1]', value: '20' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'Pushed: 20 (top=1)',
+        explanation: 'Pushed 20 onto stack at index top = 1.'
+      },
+      {
+        stepNumber: 4,
+        line: 30,
+        codeLine: 'push(30);',
+        callStack: [
+          { id: 'f1', name: 'main()', line: 30 },
+          { id: 'f2', name: 'push', line: 11, params: 'val=30' }
+        ],
+        variables: [
+          { name: 'top', value: '2', type: 'int' },
+          { name: 'stack[2]', value: '30', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x601020', name: 'top', value: '2' },
+          { address: '0x60102c', name: 'stack[2]', value: '30' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'Pushed: 30 (top=2)',
+        explanation: 'Pushed 30 onto stack at index top = 2.'
+      },
+      {
+        stepNumber: 5,
+        line: 31,
+        codeLine: 'pop();',
+        callStack: [
+          { id: 'f1', name: 'main()', line: 31 },
+          { id: 'f2', name: 'pop', line: 20 }
+        ],
+        variables: [
+          { name: 'poppedVal', value: '30', type: 'int' },
+          { name: 'top', value: '1', type: 'int' }
+        ],
+        stackMemory: [{ address: '0x601020', name: 'top', value: '1' }],
+        heapMemory: [],
+        consoleOutput: 'Popped: 30',
+        explanation: 'LIFO Pop: retrieved top element 30 from stack[2], decremented top to 1.'
+      },
+      {
+        stepNumber: 6,
+        line: 32,
+        codeLine: 'printf("Current Top Element: %d\\n", stack[top]);',
+        callStack: [{ id: 'f1', name: 'main()', line: 32 }],
+        variables: [
+          { name: 'top', value: '1', type: 'int' },
+          { name: 'stack[top]', value: '20', type: 'int' }
+        ],
+        stackMemory: [{ address: '0x601020', name: 'top', value: '1' }],
+        heapMemory: [],
+        consoleOutput: 'Current Top Element: 20',
+        explanation: 'Peeked current top element stack[1] = 20.'
+      }
+    ]
+  },
+  {
+    id: 'c-queue-implementation',
+    name: 'C - Queue Implementation (FIFO Front & Rear)',
+    language: 'c',
+    description: 'Implements FIFO Queue data structure with front & rear pointers in C.',
+    code: `// C - Queue Implementation (FIFO)
+#include <stdio.h>
+
+#define SIZE 5
+
+int queue[SIZE];
+int front = -1, rear = -1;
+
+void enqueue(int val) {
+    if (rear < SIZE - 1) {
+        if (front == -1) front = 0;
+        rear++;
+        queue[rear] = val;
+        printf("Enqueued: %d\n", val);
+    }
+}
+
+int dequeue() {
+    if (front != -1 && front <= rear) {
+        int val = queue[front];
+        printf("Dequeued: %d\n", val);
+        front++;
+        return val;
+    }
+    return -1;
+}
+
+int main() {
+    enqueue(100);
+    enqueue(200);
+    enqueue(300);
+    dequeue();
+    printf("Front Element: %d\n", queue[front]);
+    return 0;
+}`,
+    steps: [
+      {
+        stepNumber: 1,
+        line: 7,
+        codeLine: 'int front = -1, rear = -1;',
+        callStack: [{ id: 'f1', name: 'main()', line: 28 }],
+        variables: [
+          { name: 'front', value: '-1', type: 'int' },
+          { name: 'rear', value: '-1', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x601030', name: 'front', value: '-1' },
+          { address: '0x601034', name: 'rear', value: '-1' }
+        ],
+        heapMemory: [],
+        consoleOutput: '',
+        explanation: 'Initialized empty Queue pointers front = -1 and rear = -1.'
+      },
+      {
+        stepNumber: 2,
+        line: 28,
+        codeLine: 'enqueue(100);',
+        callStack: [
+          { id: 'f1', name: 'main()', line: 28 },
+          { id: 'f2', name: 'enqueue', line: 10, params: 'val=100' }
+        ],
+        variables: [
+          { name: 'front', value: '0', type: 'int' },
+          { name: 'rear', value: '0', type: 'int' },
+          { name: 'queue[0]', value: '100', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x601030', name: 'front', value: '0' },
+          { address: '0x601034', name: 'rear', value: '0' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'Enqueued: 100',
+        explanation: 'First element enqueued: set front = 0, rear = 0, stored 100 at queue[0].'
+      },
+      {
+        stepNumber: 3,
+        line: 29,
+        codeLine: 'enqueue(200);',
+        callStack: [
+          { id: 'f1', name: 'main()', line: 29 },
+          { id: 'f2', name: 'enqueue', line: 10, params: 'val=200' }
+        ],
+        variables: [
+          { name: 'front', value: '0', type: 'int' },
+          { name: 'rear', value: '1', type: 'int' },
+          { name: 'queue[1]', value: '200', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x601030', name: 'front', value: '0' },
+          { address: '0x601034', name: 'rear', value: '1' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'Enqueued: 200',
+        explanation: 'Enqueued 200 at rear index = 1.'
+      },
+      {
+        stepNumber: 4,
+        line: 30,
+        codeLine: 'enqueue(300);',
+        callStack: [
+          { id: 'f1', name: 'main()', line: 30 },
+          { id: 'f2', name: 'enqueue', line: 10, params: 'val=300' }
+        ],
+        variables: [
+          { name: 'front', value: '0', type: 'int' },
+          { name: 'rear', value: '2', type: 'int' },
+          { name: 'queue[2]', value: '300', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x601030', name: 'front', value: '0' },
+          { address: '0x601034', name: 'rear', value: '2' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'Enqueued: 300',
+        explanation: 'Enqueued 300 at rear index = 2.'
+      },
+      {
+        stepNumber: 5,
+        line: 31,
+        codeLine: 'dequeue();',
+        callStack: [
+          { id: 'f1', name: 'main()', line: 31 },
+          { id: 'f2', name: 'dequeue', line: 18 }
+        ],
+        variables: [
+          { name: 'dequeuedVal', value: '100', type: 'int' },
+          { name: 'front', value: '1', type: 'int' }
+        ],
+        stackMemory: [
+          { address: '0x601030', name: 'front', value: '1' },
+          { address: '0x601034', name: 'rear', value: '2' }
+        ],
+        heapMemory: [],
+        consoleOutput: 'Dequeued: 100',
+        explanation: 'FIFO Dequeue: removed oldest element 100 from front (queue[0]), incremented front to 1.'
+      },
+      {
+        stepNumber: 6,
+        line: 32,
+        codeLine: 'printf("Front Element: %d\\n", queue[front]);',
+        callStack: [{ id: 'f1', name: 'main()', line: 32 }],
+        variables: [
+          { name: 'front', value: '1', type: 'int' },
+          { name: 'queue[front]', value: '200', type: 'int' }
+        ],
+        stackMemory: [{ address: '0x601030', name: 'front', value: '1' }],
+        heapMemory: [],
+        consoleOutput: 'Front Element: 200',
+        explanation: 'Peeked new front element queue[1] = 200.'
+      }
+    ]
+  },
+  {
+    id: 'c-binary-tree',
+    name: 'C - Binary Tree & In-Order Traversal',
+    language: 'c',
+    description: 'Constructs binary tree with struct TreeNode, malloc, and recursive in-order traversal in C.',
+    code: `// C - Binary Tree & In-Order Traversal
+#include <stdio.h>
+#include <stdlib.h>
+
+struct TreeNode {
+    int data;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+struct TreeNode* createTreeNode(int val) {
+    struct TreeNode* node = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    node->data = val;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+void inorder(struct TreeNode* root) {
+    if (root == NULL) return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+
+int main() {
+    struct TreeNode* root = createTreeNode(50);
+    root->left = createTreeNode(30);
+    root->right = createTreeNode(70);
+
+    printf("In-Order Traversal of Tree: ");
+    inorder(root);
+    printf("\n");
+    return 0;
+}`,
+    steps: [
+      {
+        stepNumber: 1,
+        line: 26,
+        codeLine: 'struct TreeNode* root = createTreeNode(50);',
+        callStack: [{ id: 'f1', name: 'main()', line: 26 }],
+        variables: [{ name: 'root', value: '0x00B000', type: 'struct TreeNode*' }],
+        stackMemory: [{ address: '0x7ffc40', name: 'root', value: '0x00B000' }],
+        heapMemory: [{ address: '0x00B000', type: 'TreeNode', value: '{ data: 50, left: NULL, right: NULL }' }],
+        explanation: 'Allocated root node on Heap at 0x00B000 with value 50.'
+      },
+      {
+        stepNumber: 2,
+        line: 27,
+        codeLine: 'root->left = createTreeNode(30);',
+        callStack: [{ id: 'f1', name: 'main()', line: 27 }],
+        variables: [{ name: 'root->left', value: '0x00B010', type: 'struct TreeNode*' }],
+        stackMemory: [{ address: '0x7ffc40', name: 'root', value: '0x00B000' }],
+        heapMemory: [
+          { address: '0x00B000', type: 'TreeNode', value: '{ data: 50, left: 0x00B010, right: NULL }' },
+          { address: '0x00B010', type: 'TreeNode', value: '{ data: 30, left: NULL, right: NULL }' }
+        ],
+        explanation: 'Allocated left child node at Heap 0x00B010 with value 30.'
+      },
+      {
+        stepNumber: 3,
+        line: 28,
+        codeLine: 'root->right = createTreeNode(70);',
+        callStack: [{ id: 'f1', name: 'main()', line: 28 }],
+        variables: [{ name: 'root->right', value: '0x00B020', type: 'struct TreeNode*' }],
+        stackMemory: [{ address: '0x7ffc40', name: 'root', value: '0x00B000' }],
+        heapMemory: [
+          { address: '0x00B000', type: 'TreeNode', value: '{ data: 50, left: 0x00B010, right: 0x00B020 }' },
+          { address: '0x00B010', type: 'TreeNode', value: '{ data: 30, left: NULL, right: NULL }' },
+          { address: '0x00B020', type: 'TreeNode', value: '{ data: 70, left: NULL, right: NULL }' }
+        ],
+        explanation: 'Allocated right child node at Heap 0x00B020 with value 70.'
+      },
+      {
+        stepNumber: 4,
+        line: 31,
+        codeLine: 'inorder(root);',
+        callStack: [
+          { id: 'f1', name: 'main()', line: 31 },
+          { id: 'f2', name: 'inorder', line: 18, params: 'root=0x00B000 (50)' },
+          { id: 'f3', name: 'inorder', line: 18, params: 'root=0x00B010 (30)' }
+        ],
+        variables: [{ name: 'root->data', value: '30', type: 'int' }],
+        stackMemory: [
+          { address: '0x7ffc40', name: 'root', value: '0x00B000' },
+          { address: '0x7ffc48', name: 'inorder(50)', value: 'Frame' },
+          { address: '0x7ffc50', name: 'inorder(30)', value: 'Frame' }
+        ],
+        heapMemory: [
+          { address: '0x00B000', type: 'TreeNode', value: '50' },
+          { address: '0x00B010', type: 'TreeNode', value: '30' },
+          { address: '0x00B020', type: 'TreeNode', value: '70' }
+        ],
+        consoleOutput: 'In-Order Traversal of Tree: ',
+        explanation: 'Recursive call inorder(left): traversed to left child 30.'
+      },
+      {
+        stepNumber: 5,
+        line: 21,
+        codeLine: 'printf("%d ", root->data);',
+        callStack: [{ id: 'f1', name: 'main()', line: 31 }],
+        variables: [{ name: 'root', value: '0x00B000', type: 'struct TreeNode*' }],
+        stackMemory: [{ address: '0x7ffc40', name: 'root', value: '0x00B000' }],
+        heapMemory: [],
+        consoleOutput: '30 50 70',
+        explanation: 'In-Order traversal complete: printed Left-Root-Right sequence: 30 50 70.'
+      }
+    ]
   }
 ];
 

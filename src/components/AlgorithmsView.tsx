@@ -56,15 +56,15 @@ export const AlgorithmsView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-4 sm:p-6 lg:p-8 transition-colors duration-300">
       <div className="max-w-6xl mx-auto space-y-6">
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Cpu className="w-6 h-6 text-indigo-400" />
-              <h1 className="text-2xl font-extrabold text-slate-100">Algorithm Visualizer</h1>
+              <Cpu className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+              <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">Algorithm Visualizer</h1>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-600 dark:text-slate-400">
               Watch comparison and swap operations step by step in real time.
             </p>
           </div>
@@ -72,7 +72,7 @@ export const AlgorithmsView: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={handleRandomize}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors border border-slate-200 dark:border-slate-700"
             >
               <Shuffle className="w-3.5 h-3.5" />
               <span>Randomize Array</span>
@@ -90,7 +90,7 @@ export const AlgorithmsView: React.FC = () => {
         </div>
 
         {/* Algorithm Selector Bar */}
-        <div className="flex gap-2 bg-slate-900/60 p-2 rounded-2xl border border-slate-800">
+        <div className="flex overflow-x-auto no-scrollbar gap-2 bg-slate-200/60 dark:bg-slate-900/60 p-2 rounded-2xl border border-slate-300 dark:border-slate-800">
           {[
             { id: 'bubble', label: 'Bubble Sort (O(n²))' },
             { id: 'quick', label: 'Quick Sort (O(n log n))' },
@@ -100,10 +100,11 @@ export const AlgorithmsView: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setAlgorithm(item.id as any)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors ${algorithm === item.id
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-slate-950 text-slate-400 hover:bg-slate-800'
-                }`}
+              className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition-colors ${
+                algorithm === item.id
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+              }`}
             >
               {item.label}
             </button>
@@ -111,17 +112,17 @@ export const AlgorithmsView: React.FC = () => {
         </div>
 
         {/* Metrics Bar */}
-        <div className="flex items-center gap-6 bg-slate-900 border border-slate-800 p-4 rounded-2xl text-xs font-mono">
+        <div className="flex items-center gap-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl text-xs font-mono shadow-sm">
           <div>
-            Comparisons: <span className="text-amber-400 font-bold">{metrics.comparisons}</span>
+            Comparisons: <span className="text-amber-600 dark:text-amber-400 font-bold">{metrics.comparisons}</span>
           </div>
           <div>
-            Swaps: <span className="text-pink-400 font-bold">{metrics.swaps}</span>
+            Swaps: <span className="text-pink-600 dark:text-pink-400 font-bold">{metrics.swaps}</span>
           </div>
         </div>
 
         {/* Animated Array Bars Canvas */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 min-h-[300px] flex items-end justify-center gap-3">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-8 min-h-[260px] sm:min-h-[300px] flex items-end justify-center gap-1.5 sm:gap-3 overflow-x-auto shadow-sm">
           {array.map((val, idx) => {
             const isComp = comparing.includes(idx);
             const isSwap = swapping.includes(idx);
@@ -134,7 +135,7 @@ export const AlgorithmsView: React.FC = () => {
 
             return (
               <div key={idx} className="flex flex-col items-center gap-2 flex-1 max-w-[60px]">
-                <span className="text-[11px] font-mono text-slate-300 font-bold">{val}</span>
+                <span className="text-[11px] font-mono text-slate-700 dark:text-slate-300 font-bold">{val}</span>
                 <div
                   style={{ height: `${val * 2.5}px` }}
                   className={`w-full rounded-t-xl border-t-2 transition-all duration-200 ${barBg}`}
